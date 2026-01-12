@@ -1,6 +1,6 @@
 import { Card } from './Card.jsx';
 
-export function DiscardPileModal({ cards, onTakeCard, onClose }) {
+export function DiscardPileModal({ cards, onTakeCard, onClose, cardDamage }) {
   const handleBackdropClick = (e) => {
     if (e.target === e.currentTarget) {
       onClose();
@@ -25,6 +25,7 @@ export function DiscardPileModal({ cards, onTakeCard, onClose }) {
                 <Card
                   key={card.id}
                   card={card}
+                  cardDamage={cardDamage}
                   onTake={() => onTakeCard(card.id)}
                 />
               ))}

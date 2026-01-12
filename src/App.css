@@ -107,7 +107,6 @@ main {
 }
 
 .game-board {
-  max-width: 1400px;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
@@ -289,7 +288,7 @@ main {
   display: flex;
   flex-direction: row;
   gap: 0.75em;
-  max-height: calc(100vh - 300px);
+  height: 17em;
   overflow-y: auto;
   overflow-x: scroll;
 }
@@ -357,6 +356,71 @@ main {
   flex: 100;
 }
 
+.card-durability {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5em;
+  margin-top: 0.5em;
+  padding: 0.4em;
+  background: #0f3460;
+  border-radius: 4px;
+}
+
+.durability-label {
+  font-size: 0.7em;
+  color: #888;
+  font-weight: 600;
+}
+
+.durability-tracker {
+  display: flex;
+  align-items: center;
+  gap: 0.3em;
+}
+
+.durability-btn {
+  width: 1.4em;
+  height: 1.4em;
+  padding: 0;
+  font-size: 0.75em;
+  font-weight: 700;
+  color: white;
+  background: #333;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: background 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.durability-btn:hover:not(:disabled) {
+  background: #555;
+}
+
+.durability-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.durability-value {
+  font-size: 0.8em;
+  font-weight: 600;
+  min-width: 2.5em;
+  text-align: center;
+}
+
+.durability-separator {
+  color: #666;
+  margin: 0 0.1em;
+}
+
+.damage-taken {
+  color: #e94560;
+}
+
 .no-game {
   text-align: center;
   padding: 4em 2em;
@@ -402,6 +466,35 @@ main {
   color: #4ecca3;
 }
 
+.opponent-stat.inventory-stat {
+  color: #6b5b95;
+}
+
+.opponent-view-btn {
+  background: #0f3460;
+  padding: 0.3em 0.6em;
+  border-radius: 4px;
+  font-size: 0.9em;
+  color: #fff;
+  border: 1px solid #4ecca3;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.opponent-view-btn:hover {
+  background: #4ecca3;
+  color: #1a1a2e;
+}
+
+.opponent-view-btn.inventory-stat {
+  border-color: #6b5b95;
+}
+
+.opponent-view-btn.inventory-stat:hover {
+  background: #6b5b95;
+  color: #fff;
+}
+
 .play-area {
   display: flex;
   gap: 1.5em;
@@ -409,10 +502,53 @@ main {
 
 .current-card-area,
 .discard-pile-area {
-  flex: 1;
+  flex: 0 0 auto;
   background: #16213e;
   border-radius: 8px;
   padding: 1em;
+}
+
+.shuffle-discard-button {
+  width: 100%;
+  margin-top: 1em;
+  padding: 0.6em 1em;
+  font-size: 0.95em;
+  font-weight: 600;
+  color: white;
+  background: #0f3460;
+  border: 2px solid #e94560;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.shuffle-discard-button:hover:not(:disabled) {
+  background: #e94560;
+  color: white;
+}
+
+.shuffle-discard-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  border-color: #555;
+}
+
+.inventory-button {
+  width: 100%;
+  margin-top: 0.5em;
+  padding: 0.4em 0.8em;
+  font-size: 0.85em;
+  font-weight: 600;
+  color: white;
+  background: #6b5b95;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.inventory-button:hover {
+  background: #8b7bb5;
 }
 
 .current-card-area h3,
@@ -589,7 +725,7 @@ main {
 
 .modal-cards {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   gap: 0.75em;
 }
 
@@ -605,6 +741,8 @@ main {
   border-radius: 8px;
   padding: 1em;
   border: 2px solid #b8860b;
+  flex: 1;
+  min-width: 0;
 }
 
 .adventure-header {
@@ -682,6 +820,149 @@ main {
 
 .adventure-modal .modal-header h2 {
   color: #ffd700;
+}
+
+.inventory {
+  background: #16213e;
+  border-radius: 8px;
+  padding: 1em;
+  border: 2px solid #6b5b95;
+  flex: 1;
+}
+
+.inventory-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75em;
+  margin-bottom: 1em;
+}
+
+.inventory-title {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5em;
+}
+
+.inventory-header h2 {
+  font-size: 1.25em;
+  color: #6b5b95;
+}
+
+.inventory .cards-container {
+  display: flex;
+  flex-direction: row;
+  gap: 0.75em;
+  max-height: calc(100vh - 300px);
+  overflow-y: auto;
+  overflow-x: scroll;
+}
+
+.inventory .card {
+  border-color: #6b5b95;
+}
+
+.inventory-section {
+  display: flex;
+  flex-direction: row;
+  gap: 1em;
+  align-items: flex-start;
+}
+
+.character-section {
+  background: #16213e;
+  border-radius: 8px;
+  padding: 1em;
+  border: 2px solid #e94560;
+  min-width: 180px;
+  flex: 0 0 auto;
+}
+
+.character-section h3 {
+  font-size: 1em;
+  color: #e94560;
+  margin-bottom: 0.75em;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.no-character {
+  text-align: center;
+  color: #666;
+  font-style: italic;
+  padding: 1em 0;
+}
+
+.no-character p {
+  margin-bottom: 1em;
+}
+
+.character-card {
+  background: linear-gradient(135deg, #2d2d44 0%, #1f1f2e 100%);
+  border: 1px solid #e94560;
+  border-radius: 8px;
+  padding: 0.75em;
+  margin-bottom: 0.75em;
+}
+
+.character-title {
+  font-weight: 700;
+  font-size: 1.1em;
+  color: #e94560;
+  margin-bottom: 0.5em;
+  text-align: center;
+}
+
+.character-stats {
+  font-size: 0.85em;
+  color: #4ecca3;
+  margin-bottom: 0.75em;
+  line-height: 1.4;
+}
+
+.character-ability {
+  font-size: 0.8em;
+  color: #aaa;
+  line-height: 1.4;
+}
+
+.ability-label {
+  color: #ffd700;
+  font-weight: 600;
+}
+
+.draw-character-btn {
+  width: 100%;
+  padding: 0.5em 0.75em;
+  font-size: 0.85em;
+  font-weight: 600;
+  color: white;
+  background: #0f3460;
+  border: 1px solid #e94560;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.draw-character-btn:hover {
+  background: #e94560;
+}
+
+.opponent-view-btn.character-btn {
+  border-color: #e94560;
+}
+
+.opponent-view-btn.character-btn:hover {
+  background: #e94560;
+  color: white;
+}
+
+.character-modal {
+  max-width: 400px;
+}
+
+.modal-character {
+  margin: 0 auto;
 }
 
 @media (max-width: 900px) {

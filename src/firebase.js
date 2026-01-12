@@ -1,6 +1,6 @@
 import { initializeApp } from 'firebase/app';
 import { getDatabase, ref, set, onValue, get } from 'firebase/database';
-import { createDeck, createAdventureDeck, shuffleDeck } from './cardData.js';
+import { createDeck, createAdventureDeck, shuffleDeck, getRandomCharacter } from './cardData.js';
 
 const firebaseConfig = {
   apiKey: "AIzaSyAm8uZMkpR9mNsWetQ4Amn9oskeLn2YFUk",
@@ -39,6 +39,14 @@ export async function startNewGame() {
       player1: [],
       player2: [],
     },
+    inventories: {
+      player1: [],
+      player2: [],
+    },
+    characters: {
+      player1: null,
+      player2: null,
+    },
     currentCard: null,
     discardPile: [],
     adventureDeck,
@@ -51,6 +59,7 @@ export async function startNewGame() {
       player1: { damage: 0, gold: 0, mana: 0 },
       player2: { damage: 0, gold: 0, mana: 0 },
     },
+    cardDamage: {},
   };
   await set(getGameRef(), initialState);
 }
@@ -303,6 +312,118 @@ export async function takeFromAdventureRow(playerId, cardId) {
     adventurePiles: {
       ...state.adventurePiles,
       [playerId]: updatedPile,
+    },
+  });
+}
+
+export async function shuffleDiscardIntoDeck() {
+  const gameRef = getGameRef();
+  const snapshot = await get(gameRef);
+  const state = snapshot.val();
+
+  if (!state) return;
+
+  const discardPile = state.discardPile || [];
+  if (discardPile.length === 0) return;
+
+  const currentDeck = state.deck || [];
+  const combinedDeck = shuffleDeck([...currentDeck, ...discardPile]);
+
+  await set(gameRef, {
+    ...state,
+    deck: combinedDeck,
+    discardPile: [],
+  });
+}
+
+export async function moveToInventory(playerId, cardId) {
+  const gameRef = getGameRef();
+  const snapshot = await get(gameRef);
+  const state = snapshot.val();
+
+  if (!state) return;
+
+  const playerHand = state.hands?.[playerId] || [];
+  const cardIndex = playerHand.findIndex(card => card.id === cardId);
+
+  if (cardIndex === -1) return;
+
+  const [movedCard] = playerHand.splice(cardIndex, 1);
+  const updatedHand = [...playerHand];
+  const updatedInventory = [...(state.inventories?.[playerId] || []), movedCard];
+
+  await set(gameRef, {
+    ...state,
+    hands: {
+      ...state.hands,
+      [playerId]: updatedHand,
+    },
+    inventories: {
+      ...state.inventories,
+      [playerId]: updatedInventory,
+    },
+  });
+}
+
+export async function discardFromInventory(playerId, cardId) {
+  const gameRef = getGameRef();
+  const snapshot = await get(gameRef);
+  const state = snapshot.val();
+
+  if (!state) return;
+
+  const playerInventory = state.inventories?.[playerId] || [];
+  const cardIndex = playerInventory.findIndex(card => card.id === cardId);
+
+  if (cardIndex === -1) return;
+
+  const [discardedCard] = playerInventory.splice(cardIndex, 1);
+  const updatedInventory = [...playerInventory];
+  const updatedDiscardPile = [...(state.discardPile || []), discardedCard];
+
+  await set(gameRef, {
+    ...state,
+    inventories: {
+      ...state.inventories,
+      [playerId]: updatedInventory,
+    },
+    discardPile: updatedDiscardPile,
+  });
+}
+
+export async function drawRandomCharacter(playerId) {
+  const gameRef = getGameRef();
+  const snapshot = await get(gameRef);
+  const state = snapshot.val();
+
+  if (!state) return;
+
+  const character = getRandomCharacter();
+
+  await set(gameRef, {
+    ...state,
+    characters: {
+      ...state.characters,
+      [playerId]: character,
+    },
+  });
+}
+
+export async function updateCardDamage(cardId, delta) {
+  const gameRef = getGameRef();
+  const snapshot = await get(gameRef);
+  const state = snapshot.val();
+
+  if (!state) return;
+
+  const currentDamage = state.cardDamage?.[cardId] ?? 0;
+  const newDamage = Math.max(0, currentDamage + delta);
+
+  await set(gameRef, {
+    ...state,
+    cardDamage: {
+      ...state.cardDamage,
+      [cardId]: newDamage,
     },
   });
 }

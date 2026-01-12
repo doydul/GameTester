@@ -27,13 +27,13 @@ export const initialDeck = [
   { type: 'Item', title: "potion of rejuvination", cost: '4 Gold', description: "if you would die, discard damage equal to half your max hp (rounded down) instead, and discard this item", count: 2 },
   
   // Weapons
-  { type: 'Item - Weapon', title: "dagger", cost: '2 Gold', description: "3 strength", count: 3 },
-  { type: 'Item - Weapon', title: "masterwork dagger", cost: '3 Gold', description: "3 strength, 4 durability", count: 1 },
-  { type: 'Item - Weapon', title: "sword", cost: '4 Gold', description: "5 strength", count: 2 },
-  { type: 'Item - Weapon', title: "great axe", cost: '5 Gold', description: "8 strength, double handed", count: 2 },
-  { type: 'Item - Weapon', title: "battle axe", cost: '6 Gold', description: "7 strength", count: 2 },
-  { type: 'Item - Weapon', title: "bastard sword", cost: '8 Gold', description: "9 strength", count: 2 },
-  { type: 'Item - Weapon', title: "world slayer", cost: '10 Gold', description: "12 strength", count: 1 },
+  { type: 'Item - Weapon', title: "dagger", cost: '2 Gold', description: "3 strength", durability: 2, count: 3 },
+  { type: 'Item - Weapon', title: "masterwork dagger", cost: '3 Gold', description: "3 strength", durability: 4, count: 1 },
+  { type: 'Item - Weapon', title: "sword", cost: '4 Gold', description: "5 strength", durability: 2, count: 2 },
+  { type: 'Item - Weapon', title: "great axe", cost: '5 Gold', description: "8 strength, double handed", durability: 2, count: 2 },
+  { type: 'Item - Weapon', title: "battle axe", cost: '6 Gold', description: "7 strength", durability: 2, count: 2 },
+  { type: 'Item - Weapon', title: "bastard sword", cost: '8 Gold', description: "9 strength", durability: 2, count: 2 },
+  { type: 'Item - Weapon', title: "world slayer", cost: '10 Gold', description: "12 strength", durability: 2, count: 1 },
   
   // Spells
   { type: 'Spell', title: "fireball", cost: '3 Mana', description: "add 6 to strength", count: 3 },
@@ -75,6 +75,15 @@ export const initialAdventureDeck = [
   { type: 'Adventure', title: "battle of the 12 clans", cost: '7 Strength', description: "3 Victory Points, 3 Gold, all other players take 2 damage", count: 1 },
 ];
 
+export const characters = [
+  { type: 'Character', title: "Warrior", stats: "Strength: 4\nMax Health: 16\nMana: 0", ability: "You take -1 damage from enemy spells and actions", count: 1 },
+  { type: 'Character', title: "Rogue", stats: "Strength: 2\nMax Health: 9\nMana: 2", ability: "You may perform 3 actions per turn", count: 1 },
+  { type: 'Character', title: "Wizard", stats: "Strength: 1\nMax Health: 7\nMana: 3", ability: "The first time you play a spell each turn, draw a card", count: 1 },
+  { type: 'Character', title: "Fighter", stats: "Strength: 3\nMax Health: 12\nMana: 1", ability: "+3 Strength when using 2 weapons at once", count: 1 },
+  { type: 'Character', title: "Arcanist", stats: "Strength: 1\nMax Health: 8\nMana: 4", ability: "you only have to discard mana down to your limit (and suffer mana burn) at the end of your turn", count: 1 },
+  { type: 'Character', title: "Ranger", stats: "Strength: 1\nMax Health: 8\nMana: 3", ability: "All your weapons have +1 durability", count: 1 },
+]
+
 export function createDeck() {
   const deck = [];
   initialDeck.forEach((card, index) => {
@@ -108,4 +117,12 @@ export function shuffleDeck(deck) {
     [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
   }
   return shuffled;
+}
+
+export function getRandomCharacter() {
+  const index = Math.floor(Math.random() * characters.length);
+  return {
+    ...characters[index],
+    id: `character-${index}-${Date.now()}`,
+  };
 }

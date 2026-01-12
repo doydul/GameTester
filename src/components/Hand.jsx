@@ -1,7 +1,7 @@
 import { Card } from './Card.jsx';
-import { drawCard, playCard, discardFromHand, updateResource } from '../firebase.js';
+import { drawCard, playCard, discardFromHand, updateResource, moveToInventory } from '../firebase.js';
 
-export function Hand({ playerId, cards, deckEmpty, resources }) {
+export function Hand({ playerId, cards, deckEmpty, resources, cardDamage }) {
   const playerName = playerId === 'player1' ? 'Player 1' : 'Player 2';
 
   const handleDraw = () => {
@@ -14,6 +14,10 @@ export function Hand({ playerId, cards, deckEmpty, resources }) {
 
   const handleDiscard = (cardId) => {
     discardFromHand(playerId, cardId);
+  };
+
+  const handleMoveToInventory = (cardId) => {
+    moveToInventory(playerId, cardId);
   };
 
   const handleResourceChange = (resourceType, delta) => {
@@ -67,8 +71,10 @@ export function Hand({ playerId, cards, deckEmpty, resources }) {
             <Card
               key={card.id}
               card={card}
+              cardDamage={cardDamage}
               onPlay={() => handlePlay(card.id)}
               onDiscard={() => handleDiscard(card.id)}
+              onMoveToInventory={() => handleMoveToInventory(card.id)}
             />
           ))
         )}

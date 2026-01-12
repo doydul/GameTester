@@ -3,4 +3,9 @@ import react from '@vitejs/plugin-react'
 
 export default defineConfig({
   plugins: [react()],
+  build: {
+    outDir: './docs',
+    emptyOutDir: true, // also necessary
+  },
+  base: "https://doydul.github.io/GameTester/",
 })

@@ -1,7 +1,7 @@
 import { Card } from './Card.jsx';
 import { discardFromAdventureCardPile } from '../firebase.js';
 
-export function AdventurePileModal({ cards, onClose, playerId  }) {
+export function AdventurePileModal({ cards, onClose, playerId, cardDamage }) {
   const handleBackdropClick = (e) => {
     if (e.target === e.currentTarget) {
       onClose();
@@ -27,7 +27,7 @@ export function AdventurePileModal({ cards, onClose, playerId  }) {
           ) : (
             <div className="modal-cards">
               {cards.map((card) => (
-                <Card key={card.id} card={card} onDiscard={() => handleDiscard(card.id)}/>
+                <Card key={card.id} card={card} cardDamage={cardDamage} onDiscard={() => handleDiscard(card.id)}/>
               ))}
             </div>
           )}
