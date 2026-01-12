@@ -84,6 +84,17 @@ export function GameBoard({ gameState, playerId, opponentId }) {
   const cardDamage = gameState?.cardDamage || {};
   const currentTurn = gameState?.currentTurn || 'player1';
   const isMyTurn = currentTurn === playerId;
+  const opponentAdventurePile = gameState?.adventurePiles?.[opponentId] || [];
+
+  // Calculate victory points from adventure pile and inventory
+  const calculateVictoryPoints = (adventures, inventory) => {
+    const adventureVP = adventures.reduce((sum, card) => sum + (card.victoryPoints || 0), 0);
+    const inventoryVP = inventory.reduce((sum, card) => sum + (card.victoryPoints || 0), 0);
+    return adventureVP + inventoryVP;
+  };
+
+  const playerVictoryPoints = calculateVictoryPoints(adventurePile, playerInventory);
+  const opponentVictoryPoints = calculateVictoryPoints(opponentAdventurePile, opponentInventory);
 
   return (
     <div className="game-board">
@@ -196,6 +207,7 @@ export function GameBoard({ gameState, playerId, opponentId }) {
               >
                 Inventory: {opponentInventory.length}
               </button>
+              <span className="opponent-stat vp-stat">VP: {opponentVictoryPoints}</span>
             </div>
             <div className="turn-indicator">
               <span className={`turn-status ${isMyTurn ? 'my-turn' : 'opponent-turn'}`}>
@@ -234,6 +246,10 @@ export function GameBoard({ gameState, playerId, opponentId }) {
               onClick={() => setShowAdventurePileModal(true)}
             >
               <h3>Your Adventures ({adventurePile.length})</h3>
+              <div className="victory-points-display">
+                <span className="vp-label">Victory Points:</span>
+                <span className="vp-value">{playerVictoryPoints}</span>
+              </div>
               {adventurePile.length > 0 ? (
                 <Card card={adventurePile[adventurePile.length - 1]} cardDamage={cardDamage} />
               ) : (

@@ -345,8 +345,8 @@ main {
   border-radius: 8px;
   padding: 0.75em;
   transition: transform 0.2s, box-shadow 0.2s;
-  width: 10em;
-  height: 15em;
+  width: 11em;
+  height: 16em;
   display: flex;
   flex-direction: column;
   
@@ -509,6 +509,11 @@ main {
 
 .opponent-stat.inventory-stat {
   color: #6b5b95;
+}
+
+.opponent-stat.vp-stat {
+  color: #ff9f43;
+  font-weight: 700;
 }
 
 .opponent-view-btn {
@@ -902,6 +907,27 @@ main {
 
 .adventure-pile-area .card {
   border-color: #b8860b;
+}
+
+.victory-points-display {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  background: #0f3460;
+  padding: 0.5em 0.75em;
+  border-radius: 6px;
+  margin-bottom: 0.75em;
+}
+
+.vp-label {
+  font-size: 0.9em;
+  color: #aaa;
+}
+
+.vp-value {
+  font-size: 1.2em;
+  font-weight: 700;
+  color: #ff9f43;
 }
 
 .adventure-modal .modal-header h2 {
