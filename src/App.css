@@ -1,0 +1,351 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+  background: #1a1a2e;
+  color: #eee;
+  min-height: 100vh;
+}
+
+.app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-header {
+  background: #16213e;
+  padding: 1rem 2rem;
+  border-bottom: 2px solid #0f3460;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.app-header h1 {
+  font-size: 1.5rem;
+  color: #e94560;
+}
+
+.player-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  color: #4ecca3;
+  font-weight: 600;
+}
+
+.change-player-btn {
+  padding: 0.4rem 0.8rem;
+  font-size: 0.85rem;
+  color: #aaa;
+  background: transparent;
+  border: 1px solid #555;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.change-player-btn:hover {
+  color: #fff;
+  border-color: #888;
+}
+
+.player-select {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  text-align: center;
+}
+
+.player-select h2 {
+  font-size: 1.5rem;
+  color: #4ecca3;
+  margin-bottom: 2rem;
+}
+
+.player-buttons {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.player-select-btn {
+  padding: 1.5rem 3rem;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: white;
+  background: #16213e;
+  border: 2px solid #4ecca3;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.player-select-btn:hover {
+  background: #4ecca3;
+  color: #1a1a2e;
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  font-size: 1.25rem;
+  color: #888;
+}
+
+main {
+  flex: 1;
+  padding: 1.5rem;
+}
+
+.game-board {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.game-controls {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background: #16213e;
+  border-radius: 8px;
+}
+
+.new-game-button {
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: white;
+  background: #e94560;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.new-game-button:hover {
+  background: #ff6b6b;
+}
+
+.deck-info {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.deck-label {
+  font-weight: 600;
+  color: #888;
+}
+
+.deck-count {
+  font-size: 1.1rem;
+  color: #4ecca3;
+}
+
+.players-container {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 1rem;
+}
+
+.divider {
+  width: 2px;
+  background: #0f3460;
+  margin: 0 0.5rem;
+}
+
+.hand {
+  background: #16213e;
+  border-radius: 8px;
+  padding: 1rem;
+}
+
+.hand-header {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.hand-header h2 {
+  font-size: 1.25rem;
+  color: #4ecca3;
+}
+
+.card-count {
+  color: #888;
+  font-size: 0.9rem;
+}
+
+.draw-button {
+  width: 100%;
+  padding: 0.6rem 1rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: white;
+  background: #0f3460;
+  border: 2px solid #4ecca3;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-bottom: 1rem;
+}
+
+.draw-button:hover:not(:disabled) {
+  background: #4ecca3;
+  color: #1a1a2e;
+}
+
+.draw-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  border-color: #555;
+}
+
+.cards-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  max-height: calc(100vh - 300px);
+  overflow-y: auto;
+}
+
+.empty-hand {
+  color: #666;
+  font-style: italic;
+  text-align: center;
+  padding: 2rem;
+}
+
+.card {
+  background: linear-gradient(135deg, #2d2d44 0%, #1f1f2e 100%);
+  border: 1px solid #3d3d5c;
+  border-radius: 8px;
+  padding: 0.75rem;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.card-title {
+  font-weight: 600;
+  font-size: 1rem;
+  color: #fff;
+}
+
+.card-cost {
+  background: #e94560;
+  color: white;
+  font-weight: 700;
+  font-size: 0.85rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  min-width: 1.5rem;
+  text-align: center;
+}
+
+.card-description {
+  font-size: 0.85rem;
+  color: #aaa;
+  line-height: 1.4;
+}
+
+.no-game {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: #888;
+  font-size: 1.1rem;
+}
+
+.play-area {
+  display: flex;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.current-card-area,
+.discard-pile-area {
+  flex: 1;
+  background: #16213e;
+  border-radius: 8px;
+  padding: 1rem;
+}
+
+.current-card-area h3,
+.discard-pile-area h3 {
+  font-size: 1rem;
+  color: #888;
+  margin-bottom: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.current-card-area .card {
+  border-color: #4ecca3;
+  box-shadow: 0 0 12px rgba(78, 204, 163, 0.3);
+}
+
+.empty-slot {
+  background: #1a1a2e;
+  border: 2px dashed #3d3d5c;
+  border-radius: 8px;
+  padding: 2rem;
+  text-align: center;
+  color: #555;
+  font-style: italic;
+}
+
+.play-button {
+  width: 100%;
+  margin-top: 0.5rem;
+  padding: 0.4rem 0.8rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #1a1a2e;
+  background: #4ecca3;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.play-button:hover {
+  background: #3db892;
+}
+
+@media (max-width: 900px) {
+  .players-container {
+    grid-template-columns: 1fr;
+  }
+
+  .divider {
+    width: 100%;
+    height: 2px;
+    margin: 0.5rem 0;
+  }
+
+  .play-area {
+    flex-direction: column;
+  }
+}
