@@ -60,6 +60,7 @@ export async function startNewGame() {
       player2: { damage: 0, gold: 0, mana: 0 },
     },
     cardDamage: {},
+    currentTurn: 'player1',
   };
   await set(getGameRef(), initialState);
 }
@@ -425,5 +426,20 @@ export async function updateCardDamage(cardId, delta) {
       ...state.cardDamage,
       [cardId]: newDamage,
     },
+  });
+}
+
+export async function endTurn() {
+  const gameRef = getGameRef();
+  const snapshot = await get(gameRef);
+  const state = snapshot.val();
+
+  if (!state) return;
+
+  const nextTurn = state.currentTurn === 'player1' ? 'player2' : 'player1';
+
+  await set(gameRef, {
+    ...state,
+    currentTurn: nextTurn,
   });
 }

@@ -16,7 +16,8 @@ import {
   drawToAdventureRow,
   discardFromAdventureCardRow,
   takeFromAdventureRow,
-  shuffleDiscardIntoDeck
+  shuffleDiscardIntoDeck,
+  endTurn
 } from '../firebase.js';
 
 export function GameBoard({ gameState, playerId, opponentId }) {
@@ -25,6 +26,7 @@ export function GameBoard({ gameState, playerId, opponentId }) {
   const [showOpponentHandModal, setShowOpponentHandModal] = useState(false);
   const [showOpponentInventoryModal, setShowOpponentInventoryModal] = useState(false);
   const [showOpponentCharacterModal, setShowOpponentCharacterModal] = useState(false);
+  const [showPeekAdventureModal, setShowPeekAdventureModal] = useState(false);
 
   const handleNewGame = () => {
     startNewGame();
@@ -58,6 +60,10 @@ export function GameBoard({ gameState, playerId, opponentId }) {
     shuffleDiscardIntoDeck();
   };
 
+  const handleEndTurn = () => {
+    endTurn();
+  };
+
   const deckCount = gameState?.deck?.length ?? 0;
   const deckEmpty = deckCount === 0;
   const playerCards = gameState?.hands?.[playerId] || [];
@@ -66,6 +72,7 @@ export function GameBoard({ gameState, playerId, opponentId }) {
   const discardPile = gameState?.discardPile || [];
   const adventureDeckCount = gameState?.adventureDeck?.length ?? 0;
   const adventureDeckEmpty = adventureDeckCount === 0;
+  const topAdventureCard = gameState?.adventureDeck?.[0] || null;
   const adventureRow = gameState?.adventureRow || [];
   const adventurePile = gameState?.adventurePiles?.[playerId] || [];
   const playerResources = gameState?.resources?.[playerId] || { damage: 0, gold: 0, mana: 0 };
@@ -75,6 +82,8 @@ export function GameBoard({ gameState, playerId, opponentId }) {
   const playerCharacter = gameState?.characters?.[playerId] || null;
   const opponentCharacter = gameState?.characters?.[opponentId] || null;
   const cardDamage = gameState?.cardDamage || {};
+  const currentTurn = gameState?.currentTurn || 'player1';
+  const isMyTurn = currentTurn === playerId;
 
   return (
     <div className="game-board">
@@ -98,13 +107,22 @@ export function GameBoard({ gameState, playerId, opponentId }) {
             <div className="adventure-section">
               <div className="adventure-header">
                 <h3>Adventure Row</h3>
-                <button
-                  className="draw-adventure-button"
-                  onClick={handleDrawToAdventureRow}
-                  disabled={adventureDeckEmpty}
-                >
-                  Draw Adventure Card
-                </button>
+                <div className="adventure-buttons">
+                  <button
+                    className="peek-adventure-button"
+                    onClick={() => setShowPeekAdventureModal(true)}
+                    disabled={adventureDeckEmpty}
+                  >
+                    Peek Top Card
+                  </button>
+                  <button
+                    className="draw-adventure-button"
+                    onClick={handleDrawToAdventureRow}
+                    disabled={adventureDeckEmpty}
+                  >
+                    Draw Adventure Card
+                  </button>
+                </div>
               </div>
               <div className="adventure-row">
                 {adventureRow.length === 0 ? (
@@ -153,7 +171,7 @@ export function GameBoard({ gameState, playerId, opponentId }) {
             </div>
           </div>
           
-          <div className='global-statistics'>
+          <div className={`global-statistics${!isMyTurn ? " highlighted" : ''}`}>
             <div className='opponent'>
               <span className="opponent-label">Opponent:</span>
               <button
@@ -179,9 +197,19 @@ export function GameBoard({ gameState, playerId, opponentId }) {
                 Inventory: {opponentInventory.length}
               </button>
             </div>
+            <div className="turn-indicator">
+              <span className={`turn-status ${isMyTurn ? 'my-turn' : 'opponent-turn'}`}>
+                {isMyTurn ? "Your Turn" : "Opponent's Turn"}
+              </span>
+              {isMyTurn && (
+                <button className="end-turn-button" onClick={handleEndTurn}>
+                  End Turn
+                </button>
+              )}
+            </div>
           </div>
 
-          <div className="player-section">
+          <div className={`player-section${isMyTurn ? " highlighted" : ''}`}>
             <Hand
               playerId={playerId}
               cards={playerCards}
@@ -191,7 +219,7 @@ export function GameBoard({ gameState, playerId, opponentId }) {
             />
           </div>
 
-          <div className="inventory-section">
+          <div className={`inventory-section`}>
             <CharacterCard
               playerId={playerId}
               character={playerCharacter}
@@ -262,6 +290,24 @@ export function GameBoard({ gameState, playerId, opponentId }) {
           character={opponentCharacter}
           onClose={() => setShowOpponentCharacterModal(false)}
         />
+      )}
+
+      {showPeekAdventureModal && (
+        <div className="modal-backdrop" onClick={() => setShowPeekAdventureModal(false)}>
+          <div className="modal peek-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h2>Top of Adventure Deck</h2>
+              <button className="modal-close" onClick={() => setShowPeekAdventureModal(false)}>&times;</button>
+            </div>
+            <div className="modal-content">
+              {topAdventureCard ? (
+                <Card card={topAdventureCard} cardDamage={cardDamage} />
+              ) : (
+                <p className="empty-modal">Adventure deck is empty</p>
+              )}
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

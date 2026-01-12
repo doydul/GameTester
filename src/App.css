@@ -138,6 +138,45 @@ main {
   background: #ff6b6b;
 }
 
+.turn-indicator {
+  display: flex;
+  align-items: center;
+  gap: 1em;
+  margin-left: auto;
+}
+
+.turn-status {
+  font-weight: 600;
+  padding: 0.5em 1em;
+  border-radius: 6px;
+}
+
+.turn-status.my-turn {
+  background: #4ecca3;
+  color: #1a1a2e;
+}
+
+.turn-status.opponent-turn {
+  background: #0f3460;
+  color: #888;
+}
+
+.end-turn-button {
+  padding: 0.5em 1.5em;
+  font-size: 1em;
+  font-weight: 600;
+  color: white;
+  background: #4ecca3;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.end-turn-button:hover {
+  background: #3db892;
+}
+
 .deck-info {
   display: flex;
   align-items: center;
@@ -433,6 +472,8 @@ main {
   border-radius: 8px;
   padding: 1em;
   color: #888;
+  display: flex;
+  flex-direction: row;
 }
 
 .opponent {
@@ -759,6 +800,46 @@ main {
   letter-spacing: 0.05em;
 }
 
+.adventure-buttons {
+  display: flex;
+  gap: 0.5em;
+}
+
+.peek-adventure-button {
+  padding: 0.5em 1em;
+  font-size: 0.9em;
+  font-weight: 600;
+  color: #ffd700;
+  background: transparent;
+  border: 1px solid #ffd700;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.peek-adventure-button:hover:not(:disabled) {
+  background: #ffd700;
+  color: #1a1a2e;
+}
+
+.peek-adventure-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.peek-modal {
+  max-width: 300px;
+}
+
+.peek-modal .modal-header h2 {
+  color: #ffd700;
+}
+
+.peek-modal .modal-content {
+  display: flex;
+  justify-content: center;
+}
+
 .draw-adventure-button {
   padding: 0.5em 1em;
   font-size: 0.9em;
@@ -796,6 +877,11 @@ main {
   flex-direction: row;
   grid-template-columns: 1fr 300px;
   gap: 1.5em;
+}
+
+.highlighted {
+  outline: 2px solid #4ecca3;
+  
 }
 
 .adventure-pile-area {
