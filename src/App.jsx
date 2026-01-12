@@ -7,6 +7,7 @@ export function App() {
   const [gameState, setGameState] = useState(null);
   const [loading, setLoading] = useState(true);
   const [selectedPlayer, setSelectedPlayer] = useState(null);
+  const [opponent, setOpponent] = useState(null);
 
   useEffect(() => {
     const unsubscribe = subscribeToGameState((state) => {
@@ -32,7 +33,7 @@ export function App() {
           <h1>Card Game Tester</h1>
         </header>
         <main>
-          <PlayerSelect onSelect={setSelectedPlayer} />
+          <PlayerSelect onSelect={setSelectedPlayer} onSelectOpponent={setOpponent} />
         </main>
       </div>
     );
@@ -50,7 +51,7 @@ export function App() {
         </div>
       </header>
       <main>
-        <GameBoard gameState={gameState} playerId={selectedPlayer} />
+        <GameBoard gameState={gameState} playerId={selectedPlayer} opponentId={opponent} />
       </main>
     </div>
   );

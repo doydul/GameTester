@@ -1,56 +1,104 @@
 export const initialDeck = [
-  { title: 'Fireball', cost: 3, description: 'Deal 6 damage to target creature or player.' },
-  { title: 'Lightning Bolt', cost: 1, description: 'Deal 3 damage to any target.' },
-  { title: 'Healing Wave', cost: 2, description: 'Restore 5 health to target creature or player.' },
-  { title: 'Shield Wall', cost: 2, description: 'Prevent the next 4 damage to target creature.' },
-  { title: 'Giant Growth', cost: 1, description: 'Target creature gets +3/+3 until end of turn.' },
-  { title: 'Mind Control', cost: 5, description: 'Gain control of target creature.' },
-  { title: 'Counterspell', cost: 2, description: 'Counter target spell.' },
-  { title: 'Dark Ritual', cost: 1, description: 'Add 3 mana to your mana pool.' },
-  { title: 'Goblin Warrior', cost: 2, description: 'A fierce goblin fighter. 2/2 creature.' },
-  { title: 'Stone Golem', cost: 4, description: 'A sturdy construct. 4/4 creature with defender.' },
-  { title: 'Phoenix', cost: 5, description: 'Flying. When Phoenix dies, return it to your hand. 3/3 creature.' },
-  { title: 'Assassin', cost: 3, description: 'Deathtouch. 1/1 creature.' },
-  { title: 'Dragon', cost: 7, description: 'Flying. Deal 2 damage when entering play. 5/5 creature.' },
-  { title: 'Forest Elf', cost: 1, description: 'Add 1 mana when tapped. 1/1 creature.' },
-  { title: 'Holy Knight', cost: 4, description: 'First strike, lifelink. 3/3 creature.' },
-  { title: 'Earthquake', cost: 4, description: 'Deal 3 damage to all creatures.' },
-  { title: 'Draw Power', cost: 2, description: 'Draw 2 cards.' },
-  { title: 'Mana Surge', cost: 0, description: 'Add 2 mana to your pool. Discard a card.' },
-  { title: 'Teleport', cost: 3, description: 'Return target creature to its owner\'s hand.' },
-  { title: 'Enchant Armor', cost: 2, description: 'Target creature gets +0/+4.' },
+  // Actions
+  { type: 'Action', title: "skullduggery", description: "gain 2 gold", count: 4 },
+  { type: 'Action', title: "hard labour", cost: '2 damage', description: "gain 3 gold", count: 4 },
+  { type: 'Action', title: "meditation", description: "gain 3 mana", count: 4 },
+  { type: 'Action', title: "mugging", description: "fight another player, winner takes 4 gold from loser, loser takes 2 damage", count: 2 },
+  { type: 'Action', title: "duel", description: "fight another player, loser takes 4 damage", count: 2 },
+  { type: 'Action', title: "lay low", description: "ignore the effects of an action card played by another player", count: 2 },
+  { type: 'Action', title: "sneaky stab", description: "add 2 to strength", count: 4 },
+  { type: 'Action', title: "scout", description: "discard up to 2 adventures from the row and replace them", count: 3 },
+  { type: 'Action', title: "maintenance", description: "discard all damage markers from 1 weapon", count: 3 },
+  { type: 'Action', title: "scavenging", description: "take a card from the discard pile", count: 2 },
+  { type: 'Action', title: "sabotage", description: "play at the start of another players turn; they cannot claim adventures this turn", count: 2 },
+  
+  // Items
+  { type: 'Item', title: "rogue's cowl", cost: '7 Gold', description: "draw an extra card at start of turn", count: 1 },
+  { type: 'Item', title: "rogue's cowl", cost: '6 Gold', description: "once per turn after you play an action, return it to your hand", count: 1 },
+  { type: 'Item', title: "wizard's robe", cost: '5 Gold', description: "you may gain 1 mana at start of turn", count: 1 },
+  { type: 'Item', title: "looking glass", cost: '1 Gold', description: "on your turn you may look at the top card of the adventure deck", count: 1 },
+  { type: 'Item', title: "berserker pelts", cost: '4 Gold', description: "your strength is doubled. damage you take is doubled", count: 1 },
+  { type: 'Item', title: "magic crystal", cost: '2 Gold', description: "+2 max mana", count: 2 },
+  { type: 'Item', title: "arcane amulet", cost: '7 Gold', description: "+4 max mana", count: 2 },
+  { type: 'Item', title: "belt of strength", cost: '2 Gold', description: "+1 strength", count: 2 },
+  { type: 'Item', title: "leather jerkin", cost: '2 Gold', description: "+3 max hp", count: 2 },
+  { type: 'Item', title: "full plate", cost: '6 Gold', description: "+7 max hp", count: 2 },
+  { type: 'Item', title: "crown of nobility", cost: '25 Gold', description: "8 victory points", count: 1 },
+  { type: 'Item', title: "potion of rejuvination", cost: '4 Gold', description: "if you would die, discard damage equal to half your max hp (rounded down) instead, and discard this item", count: 2 },
+  
+  // Weapons
+  { type: 'Item - Weapon', title: "dagger", cost: '2 Gold', description: "3 strength", count: 3 },
+  { type: 'Item - Weapon', title: "masterwork dagger", cost: '3 Gold', description: "3 strength, 4 durability", count: 1 },
+  { type: 'Item - Weapon', title: "sword", cost: '4 Gold', description: "5 strength", count: 2 },
+  { type: 'Item - Weapon', title: "great axe", cost: '5 Gold', description: "8 strength, double handed", count: 2 },
+  { type: 'Item - Weapon', title: "battle axe", cost: '6 Gold', description: "7 strength", count: 2 },
+  { type: 'Item - Weapon', title: "bastard sword", cost: '8 Gold', description: "9 strength", count: 2 },
+  { type: 'Item - Weapon', title: "world slayer", cost: '10 Gold', description: "12 strength", count: 1 },
+  
+  // Spells
+  { type: 'Spell', title: "fireball", cost: '3 Mana', description: "add 6 to strength", count: 3 },
+  { type: 'Spell', title: "counterspell", cost: '3 Mana', description: "counter a spell or scroll", count: 2 },
+  { type: 'Spell', title: "turn to rust", cost: '3 Mana', description: "destroy a weapon that has at least 1 damage on it", count: 2 },
+  { type: 'Spell', title: "zap", cost: '4 Mana', description: "deal 3 damage to a player", count: 2 },
+  { type: 'Spell', title: "divination", cost: '3 Mana', description: "draw 3 cards", count: 2 },
+  { type: 'Spell', title: "animate dead", cost: '4 Mana', description: "take up to 2 cards from the discard pile", count: 2 },
+  { type: 'Spell', title: "destruction", cost: 'X Mana', description: "destroy an item. mana costs is equal to the target's gold cost", count: 2 },
+  { type: 'Spell', title: "reincarnation", cost: '5 Mana', description: "play when you die. remove all damage and ignore all usual effects of death", count: 1 },
+  { type: 'Spell', title: "god mode", cost: '6 Mana', description: "claim any adventure without comparing strength or paying it's costs", count: 1 },
+  { type: 'Spell', title: "power word: death", cost: '8 Mana', description: "deal damage to a player equal to their maximum hp. this spell cannot be countered", count: 1 },
+  
+  // Scrolls
+  { type: 'Spell - Scroll', title: "cone of frost", cost: '2 Mana', description: "add 2 to strength", count: 2 },
+  { type: 'Spell - Scroll', title: "life drain", cost: '2 Mana', description: "deal 1 damage to another player and remove 1 damage from yourself", count: 2 },
+  { type: 'Spell - Scroll', title: "healing hands", cost: '2 Mana', description: "remove 3 damage", count: 2 },
+  { type: 'Spell - Scroll', title: "transmute", cost: '2 Mana', description: "discard an item from hand to receive gold equal to half it's cost (rounded down), or discard an item from your inventory for it's full cost", count: 2 },
+  { type: 'Spell - Scroll', title: "prismatic ray", cost: '4 Mana', description: "add 4 to strength", count: 2 },
+  
+  // Misc
+  { title: "Shuffle", description: "shuffle the discard pile (along with this card) into the main deck, then draw a card to replace this one", count: 1 },
 ];
 
 export const initialAdventureDeck = [
-  { title: 'Explore the Cave', cost: 2, description: 'Gain 3 gold and draw a card.' },
-  { title: 'Slay the Beast', cost: 4, description: 'Defeat a monster to gain 5 victory points.' },
-  { title: 'Rescue the Villager', cost: 3, description: 'Save a villager for 3 victory points and a reward.' },
-  { title: 'Find the Treasure', cost: 5, description: 'Discover hidden treasure worth 8 gold.' },
-  { title: 'Defend the Town', cost: 4, description: 'Protect the town for 4 victory points.' },
-  { title: 'Hunt for Artifacts', cost: 3, description: 'Search for ancient artifacts. Draw 2 cards.' },
-  { title: 'Cross the Bridge', cost: 1, description: 'Navigate the treacherous bridge for 2 victory points.' },
-  { title: 'Climb the Mountain', cost: 6, description: 'Reach the summit for 10 victory points.' },
-  { title: 'Escort the Merchant', cost: 2, description: 'Safely escort for 4 gold reward.' },
-  { title: 'Investigate Ruins', cost: 3, description: 'Explore ancient ruins. Gain a random item.' },
-  { title: 'Defeat the Bandits', cost: 3, description: 'Clear the road of bandits for 3 victory points.' },
-  { title: 'Retrieve the Relic', cost: 5, description: 'Recover a sacred relic for 6 victory points.' },
-  { title: 'Map the Forest', cost: 2, description: 'Chart the wilderness. All players draw a card.' },
-  { title: 'Negotiate Peace', cost: 4, description: 'Broker a truce for 5 victory points.' },
-  { title: 'Gather Supplies', cost: 1, description: 'Stock up on provisions. Gain 2 gold.' },
+  { type: 'Adventure', title: "arcane library", cost: '1 Strength, Discard 1 card', description: "1 Victory Point, Draw 2 Cards, 5 Mana", count: 3 },
+  { type: 'Adventure', title: "labyrinth", cost: '3 Strength, Discard 6 cards', description: "3 Victory Points, play 1 item from hand for free", count: 2 },
+  { type: 'Adventure', title: "journey through the enchanted forest", cost: '4 Strength', description: "1 Victory Points, 2g, 3m", count: 3 },
+  { type: 'Adventure', title: "goblin nest", cost: '3 Strength', description: "1 Victory Points, 3 Gold", count: 3 },
+  { type: 'Adventure', title: "abandoned town", cost: '3 Strength', description: "1 Victory Points, 1 Gold, draw 2 cards", count: 3 },
+  { type: 'Adventure', title: "orc camp", cost: '4 Strength', description: "2 Victory Points, 3 Gold", count: 3 },
+  { type: 'Adventure', title: "troll cave", cost: '5 Strength', description: "2 Victory Points, 5 Gold", count: 2 },
+  { type: 'Adventure', title: "undead tomb", cost: '5 Strength', description: "take 1 damage, 2 Victory Points, 2 Gold, take 1 card from discard pile", count: 2 },
+  { type: 'Adventure', title: "ogre mound", cost: '6 Strength', description: "2 Victory Points, 6 Gold", count: 2 },
+  { type: 'Adventure', title: "witch's lair", cost: '6 Strength', description: "take 2 damage, 3 Victory Points, 3 Gold, 6 Mana", count: 1 },
+  { type: 'Adventure', title: "mage's tower", cost: '7 Strength, 3 Mana', description: "3 Victory Points, draw 3 cards", count: 1 },
+  { type: 'Adventure', title: "battle the lich", cost: '9 Strength, 2 Mana, 3 Damage', description: "5 Victory Points, take 2 cards from discard pile", count: 1 },
+  { type: 'Adventure', title: "dragon hoard", cost: '12 Strength', description: "7 Victory Points, 12 Gold", count: 1 },
+  { type: 'Adventure', title: "battle of the 12 clans", cost: '7 Strength', description: "3 Victory Points, 3 Gold, all other players take 2 damage", count: 1 },
 ];
 
 export function createDeck() {
-  return initialDeck.map((card, index) => ({
-    ...card,
-    id: `card-${index}-${Date.now()}`,
-  }));
+  const deck = [];
+  initialDeck.forEach((card, index) => {
+    for (let i = 0; i < card.count; i++) {
+      deck.push({
+        ...card,
+        id: `card-${index}-${i}-${Date.now()}`,
+      });
+    }
+  });
+  return deck;
 }
 
 export function createAdventureDeck() {
-  return initialAdventureDeck.map((card, index) => ({
-    ...card,
-    id: `adventure-${index}-${Date.now()}`,
-  }));
+  const deck = [];
+  initialAdventureDeck.forEach((card, index) => {
+    for (let i = 0; i < card.count; i++) {
+      deck.push({
+        ...card,
+        id: `card-${index}-${i}-${Date.now()}`,
+      });
+    }
+  });
+  return deck;
 }
 
 export function shuffleDeck(deck) {

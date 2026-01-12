@@ -13,7 +13,7 @@ import {
   takeFromAdventureRow
 } from '../firebase.js';
 
-export function GameBoard({ gameState, playerId }) {
+export function GameBoard({ gameState, playerId, opponentId }) {
   const [showDiscardModal, setShowDiscardModal] = useState(false);
   const [showAdventurePileModal, setShowAdventurePileModal] = useState(false);
 
@@ -54,6 +54,8 @@ export function GameBoard({ gameState, playerId }) {
   const adventureDeckEmpty = adventureDeckCount === 0;
   const adventureRow = gameState?.adventureRow || [];
   const adventurePile = gameState?.adventurePiles?.[playerId] || [];
+  const playerResources = gameState?.resources?.[playerId] || { damage: 0, gold: 0, mana: 0 };
+  const opponentResources = gameState?.resources?.[opponentId] || { damage: 0, gold: 0, mana: 0 };
 
   return (
     <div className="game-board">
@@ -73,29 +75,6 @@ export function GameBoard({ gameState, playerId }) {
 
       {gameState ? (
         <>
-          <div className="play-area">
-            <div className="current-card-area">
-              <h3>Current Card</h3>
-              {currentCard ? (
-                <Card card={currentCard} onTake={handleTakeCurrentCard} onDiscard={handleDiscardCurrentCard} />
-              ) : (
-                <div className="empty-slot">No card played</div>
-              )}
-            </div>
-            <div
-              className="discard-pile-area clickable"
-              onClick={() => setShowDiscardModal(true)}
-            >
-              <h3>Discard Pile ({discardPile.length})</h3>
-              {discardPile.length > 0 ? (
-                <Card card={discardPile[discardPile.length - 1]} />
-              ) : (
-                <div className="empty-slot">Empty</div>
-              )}
-              <p className="click-hint">Click to view all</p>
-            </div>
-          </div>
-
           <div className="adventure-section">
             <div className="adventure-header">
               <h3>Adventure Row</h3>
@@ -122,12 +101,47 @@ export function GameBoard({ gameState, playerId }) {
               )}
             </div>
           </div>
+          
+          <div className="play-area">
+            <div className="current-card-area">
+              <h3>Current Card</h3>
+              {currentCard ? (
+                <Card card={currentCard} onTake={handleTakeCurrentCard} onDiscard={handleDiscardCurrentCard} />
+              ) : (
+                <div className="empty-slot">No card played</div>
+              )}
+            </div>
+            <div
+              className="discard-pile-area clickable"
+              onClick={() => setShowDiscardModal(true)}
+            >
+              <h3>Discard Pile ({discardPile.length})</h3>
+              {discardPile.length > 0 ? (
+                <Card card={discardPile[discardPile.length - 1]} />
+              ) : (
+                <div className="empty-slot">Empty</div>
+              )}
+              <p className="click-hint">Click to view all</p>
+            </div>
+          </div>
+          
+          <div className='global-statistics'>
+            <div className='opponent'>
+              <span className="opponent-label">Opponent:</span>
+              <span className="opponent-stat">Cards: {gameState?.hands?.[opponentId]?.length || 0}</span>
+              <span className="opponent-stat damage-stat">Damage: {opponentResources.damage}</span>
+              <span className="opponent-stat gold-stat">Gold: {opponentResources.gold}</span>
+              <span className="opponent-stat mana-stat">Mana: {opponentResources.mana}</span>
+              <span className="opponent-stat">Adventures: {gameState?.adventurePiles?.[opponentId]?.length || 0}</span>
+            </div>
+          </div>
 
           <div className="player-section">
             <Hand
               playerId={playerId}
               cards={playerCards}
               deckEmpty={deckEmpty}
+              resources={playerResources}
             />
             <div
               className="adventure-pile-area clickable"

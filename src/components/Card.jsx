@@ -3,8 +3,15 @@ export function Card({ card, onPlay, onTake, onDiscard }) {
     <div className="card">
       <div className="card-header">
         <span className="card-title">{card.title}</span>
-        <span className="card-cost">{card.cost}</span>
+        {card.type && (
+          <span className="card-type">{card.type}</span>
+        )}
       </div>
+      {card.cost && (
+        <div className="card-cost-container">
+          <span className="card-cost">{card.cost}</span>
+        </div>
+      )}
       <div className="card-description">{card.description}</div>
       <div className="card-actions">
         {onPlay && (

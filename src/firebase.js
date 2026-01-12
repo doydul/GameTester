@@ -47,8 +47,34 @@ export async function startNewGame() {
       player1: [],
       player2: [],
     },
+    resources: {
+      player1: { damage: 0, gold: 0, mana: 0 },
+      player2: { damage: 0, gold: 0, mana: 0 },
+    },
   };
   await set(getGameRef(), initialState);
+}
+
+export async function updateResource(playerId, resourceType, delta) {
+  const gameRef = getGameRef();
+  const snapshot = await get(gameRef);
+  const state = snapshot.val();
+
+  if (!state) return;
+
+  const currentValue = state.resources?.[playerId]?.[resourceType] ?? 0;
+  const newValue = Math.max(0, currentValue + delta);
+
+  await set(gameRef, {
+    ...state,
+    resources: {
+      ...state.resources,
+      [playerId]: {
+        ...state.resources?.[playerId],
+        [resourceType]: newValue,
+      },
+    },
+  });
 }
 
 export async function drawCard(playerId) {
@@ -235,14 +261,12 @@ export async function discardFromAdventureCardPile(playerId, cardId) {
   const snapshot = await get(gameRef);
   const state = snapshot.val();
   
-  console.log('1');
   if (!state || !state.adventurePiles[playerId] || state.adventurePiles[playerId].length <= 0) return;
-  console.log('2');
 
   const cardIndex = state.adventurePiles[playerId].findIndex(card => card.id === cardId);
-  console.log(cardId);
-  console.log(cardIndex);
+  
   if (cardIndex === -1) return;
+  
   const [discardedCard] = state.adventurePiles[playerId].splice(cardIndex, 1);
   const updatedAdventureCardPile = [...state.adventurePiles[playerId]];
   const updatedAdventureDeck = [...(state.adventureDeck || []), discardedCard];
