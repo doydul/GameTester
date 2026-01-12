@@ -21,10 +21,35 @@ export const initialDeck = [
   { title: 'Enchant Armor', cost: 2, description: 'Target creature gets +0/+4.' },
 ];
 
+export const initialAdventureDeck = [
+  { title: 'Explore the Cave', cost: 2, description: 'Gain 3 gold and draw a card.' },
+  { title: 'Slay the Beast', cost: 4, description: 'Defeat a monster to gain 5 victory points.' },
+  { title: 'Rescue the Villager', cost: 3, description: 'Save a villager for 3 victory points and a reward.' },
+  { title: 'Find the Treasure', cost: 5, description: 'Discover hidden treasure worth 8 gold.' },
+  { title: 'Defend the Town', cost: 4, description: 'Protect the town for 4 victory points.' },
+  { title: 'Hunt for Artifacts', cost: 3, description: 'Search for ancient artifacts. Draw 2 cards.' },
+  { title: 'Cross the Bridge', cost: 1, description: 'Navigate the treacherous bridge for 2 victory points.' },
+  { title: 'Climb the Mountain', cost: 6, description: 'Reach the summit for 10 victory points.' },
+  { title: 'Escort the Merchant', cost: 2, description: 'Safely escort for 4 gold reward.' },
+  { title: 'Investigate Ruins', cost: 3, description: 'Explore ancient ruins. Gain a random item.' },
+  { title: 'Defeat the Bandits', cost: 3, description: 'Clear the road of bandits for 3 victory points.' },
+  { title: 'Retrieve the Relic', cost: 5, description: 'Recover a sacred relic for 6 victory points.' },
+  { title: 'Map the Forest', cost: 2, description: 'Chart the wilderness. All players draw a card.' },
+  { title: 'Negotiate Peace', cost: 4, description: 'Broker a truce for 5 victory points.' },
+  { title: 'Gather Supplies', cost: 1, description: 'Stock up on provisions. Gain 2 gold.' },
+];
+
 export function createDeck() {
   return initialDeck.map((card, index) => ({
     ...card,
     id: `card-${index}-${Date.now()}`,
+  }));
+}
+
+export function createAdventureDeck() {
+  return initialAdventureDeck.map((card, index) => ({
+    ...card,
+    id: `adventure-${index}-${Date.now()}`,
   }));
 }
 

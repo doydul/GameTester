@@ -1,5 +1,5 @@
 import { Card } from './Card.jsx';
-import { drawCard, playCard } from '../firebase.js';
+import { drawCard, playCard, discardFromHand } from '../firebase.js';
 
 export function Hand({ playerId, cards, deckEmpty }) {
   const playerName = playerId === 'player1' ? 'Player 1' : 'Player 2';
@@ -10,6 +10,10 @@ export function Hand({ playerId, cards, deckEmpty }) {
 
   const handlePlay = (cardId) => {
     playCard(playerId, cardId);
+  };
+
+  const handleDiscard = (cardId) => {
+    discardFromHand(playerId, cardId);
   };
 
   return (
@@ -30,7 +34,12 @@ export function Hand({ playerId, cards, deckEmpty }) {
           <p className="empty-hand">No cards in hand</p>
         ) : (
           cards.map((card) => (
-            <Card key={card.id} card={card} onPlay={() => handlePlay(card.id)} />
+            <Card
+              key={card.id}
+              card={card}
+              onPlay={() => handlePlay(card.id)}
+              onDiscard={() => handleDiscard(card.id)}
+            />
           ))
         )}
       </div>

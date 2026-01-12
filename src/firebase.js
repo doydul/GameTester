@@ -1,6 +1,6 @@
 import { initializeApp } from 'firebase/app';
 import { getDatabase, ref, set, onValue, get } from 'firebase/database';
-import { createDeck, shuffleDeck } from './cardData.js';
+import { createDeck, createAdventureDeck, shuffleDeck } from './cardData.js';
 
 const firebaseConfig = {
   apiKey: "AIzaSyAm8uZMkpR9mNsWetQ4Amn9oskeLn2YFUk",
@@ -32,6 +32,7 @@ export function subscribeToGameState(callback) {
 
 export async function startNewGame() {
   const deck = shuffleDeck(createDeck());
+  const adventureDeck = shuffleDeck(createAdventureDeck());
   const initialState = {
     deck,
     hands: {
@@ -40,6 +41,12 @@ export async function startNewGame() {
     },
     currentCard: null,
     discardPile: [],
+    adventureDeck,
+    adventureRow: [],
+    adventurePiles: {
+      player1: [],
+      player2: [],
+    },
   };
   await set(getGameRef(), initialState);
 }
@@ -94,5 +101,184 @@ export async function playCard(playerId, cardId) {
     },
     currentCard: playedCard,
     discardPile: updatedDiscardPile,
+  });
+}
+
+export async function takeFromDiscard(playerId, cardId) {
+  const gameRef = getGameRef();
+  const snapshot = await get(gameRef);
+  const state = snapshot.val();
+
+  if (!state) return;
+
+  const discardPile = state.discardPile || [];
+  const cardIndex = discardPile.findIndex(card => card.id === cardId);
+
+  if (cardIndex === -1) return;
+
+  const [takenCard] = discardPile.splice(cardIndex, 1);
+  const updatedDiscardPile = [...discardPile];
+  const updatedHand = [...(state.hands?.[playerId] || []), takenCard];
+
+  await set(gameRef, {
+    ...state,
+    hands: {
+      ...state.hands,
+      [playerId]: updatedHand,
+    },
+    discardPile: updatedDiscardPile,
+  });
+}
+
+export async function takeCurrentCard(playerId) {
+  const gameRef = getGameRef();
+  const snapshot = await get(gameRef);
+  const state = snapshot.val();
+
+  if (!state || !state.currentCard) return;
+
+  const updatedHand = [...(state.hands?.[playerId] || []), state.currentCard];
+
+  await set(gameRef, {
+    ...state,
+    hands: {
+      ...state.hands,
+      [playerId]: updatedHand,
+    },
+    currentCard: null,
+  });
+}
+
+export async function discardFromHand(playerId, cardId) {
+  const gameRef = getGameRef();
+  const snapshot = await get(gameRef);
+  const state = snapshot.val();
+
+  if (!state) return;
+
+  const playerHand = state.hands?.[playerId] || [];
+  const cardIndex = playerHand.findIndex(card => card.id === cardId);
+
+  if (cardIndex === -1) return;
+
+  const [discardedCard] = playerHand.splice(cardIndex, 1);
+  const updatedHand = [...playerHand];
+  const updatedDiscardPile = [...(state.discardPile || []), discardedCard];
+
+  await set(gameRef, {
+    ...state,
+    hands: {
+      ...state.hands,
+      [playerId]: updatedHand,
+    },
+    discardPile: updatedDiscardPile,
+  });
+}
+
+export async function discardCurrentCard() {
+  const gameRef = getGameRef();
+  const snapshot = await get(gameRef);
+  const state = snapshot.val();
+
+  if (!state || !state.currentCard) return;
+
+  const updatedDiscardPile = [...(state.discardPile || []), state.currentCard];
+
+  await set(gameRef, {
+    ...state,
+    currentCard: null,
+    discardPile: updatedDiscardPile,
+  });
+}
+
+export async function drawToAdventureRow() {
+  const gameRef = getGameRef();
+  const snapshot = await get(gameRef);
+  const state = snapshot.val();
+
+  if (!state || !state.adventureDeck || state.adventureDeck.length === 0) return;
+
+  const [drawnCard, ...remainingDeck] = state.adventureDeck;
+  const updatedRow = [...(state.adventureRow || []), drawnCard];
+
+  await set(gameRef, {
+    ...state,
+    adventureDeck: remainingDeck,
+    adventureRow: updatedRow,
+  });
+}
+
+export async function discardFromAdventureCardRow(cardId) {
+  const gameRef = getGameRef();
+  const snapshot = await get(gameRef);
+  const state = snapshot.val();
+
+  if (!state || !state.adventureRow || state.adventureRow.length <= 0) return;
+
+  const cardIndex = state.adventureRow.findIndex(card => card.id === cardId);
+
+  if (cardIndex === -1) return;
+
+  const [discardedCard] = state.adventureRow.splice(cardIndex, 1);
+  const updatedRow = [...state.adventureRow];
+  const updatedAdventureDeck = [...(state.adventureDeck || []), discardedCard];
+
+  await set(gameRef, {
+    ...state,
+    adventureRow: updatedRow,
+    adventureDeck: updatedAdventureDeck
+  });
+}
+
+export async function discardFromAdventureCardPile(playerId, cardId) {
+  const gameRef = getGameRef();
+  const snapshot = await get(gameRef);
+  const state = snapshot.val();
+  
+  console.log('1');
+  if (!state || !state.adventurePiles[playerId] || state.adventurePiles[playerId].length <= 0) return;
+  console.log('2');
+
+  const cardIndex = state.adventurePiles[playerId].findIndex(card => card.id === cardId);
+  console.log(cardId);
+  console.log(cardIndex);
+  if (cardIndex === -1) return;
+  const [discardedCard] = state.adventurePiles[playerId].splice(cardIndex, 1);
+  const updatedAdventureCardPile = [...state.adventurePiles[playerId]];
+  const updatedAdventureDeck = [...(state.adventureDeck || []), discardedCard];
+
+  await set(gameRef, {
+    ...state,
+    adventureDeck: updatedAdventureDeck,
+    adventurePiles: {
+      ...(state.adventurePiles || {}),
+      [playerId]: updatedAdventureCardPile,
+    },
+  });
+}
+
+export async function takeFromAdventureRow(playerId, cardId) {
+  const gameRef = getGameRef();
+  const snapshot = await get(gameRef);
+  const state = snapshot.val();
+
+  if (!state) return;
+
+  const adventureRow = state.adventureRow || [];
+  const cardIndex = adventureRow.findIndex(card => card.id === cardId);
+
+  if (cardIndex === -1) return;
+
+  const [takenCard] = adventureRow.splice(cardIndex, 1);
+  const updatedRow = [...adventureRow];
+  const updatedPile = [...(state.adventurePiles?.[playerId] || []), takenCard];
+
+  await set(gameRef, {
+    ...state,
+    adventureRow: updatedRow,
+    adventurePiles: {
+      ...state.adventurePiles,
+      [playerId]: updatedPile,
+    },
   });
 }

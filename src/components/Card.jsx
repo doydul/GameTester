@@ -1,4 +1,4 @@
-export function Card({ card, onPlay }) {
+export function Card({ card, onPlay, onTake, onDiscard }) {
   return (
     <div className="card">
       <div className="card-header">
@@ -6,11 +6,23 @@ export function Card({ card, onPlay }) {
         <span className="card-cost">{card.cost}</span>
       </div>
       <div className="card-description">{card.description}</div>
-      {onPlay && (
-        <button className="play-button" onClick={onPlay}>
-          Play
-        </button>
-      )}
+      <div className="card-actions">
+        {onPlay && (
+          <button className="play-button" onClick={onPlay}>
+            Play
+          </button>
+        )}
+        {onTake && (
+          <button className="take-button" onClick={onTake}>
+            Take
+          </button>
+        )}
+        {onDiscard && (
+          <button className="discard-button" onClick={onDiscard}>
+            Discard
+          </button>
+        )}
+      </div>
     </div>
   );
 }
