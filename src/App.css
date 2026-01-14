@@ -395,6 +395,57 @@ main {
   flex: 100;
 }
 
+/* Keyword highlighting styles */
+.keyword-item {
+  color: #4ecca3;
+  font-weight: 700;
+}
+
+.card-description .keyword-strength {
+  color: #e94560;
+  font-weight: 700;
+}
+
+.keyword-spell {
+  color: #5dade2;
+  font-weight: 700;
+}
+
+.keyword-mana {
+  color: #5dade2;
+  font-weight: 700;
+}
+
+.keyword-weapon {
+  color: #e94560;
+  font-weight: 700;
+}
+
+.keyword-gold {
+  color: #ffd700;
+  font-weight: 700;
+}
+
+.keyword-action {
+  color: #888;
+  font-weight: 700;
+}
+
+.card-description .keyword-damage {
+  color: #e94560;
+  font-weight: 700;
+}
+
+.keyword-card {
+  color: #888;
+  font-weight: 700;
+}
+
+.keyword-vp {
+  color: #aa45e9;
+  font-weight: 700;
+}
+
 .card-durability {
   display: flex;
   align-items: center;
