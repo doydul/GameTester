@@ -20,6 +20,7 @@ const keywordStyles = {
   "victory points": 'keyword-vp',
   vp: 'keyword-vp',
   vps: 'keyword-vp',
+  stamina: 'keyword-stamina',
 };
 
 // Create regex pattern for all keywords (case-insensitive, word boundaries)

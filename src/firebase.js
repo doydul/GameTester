@@ -1,6 +1,6 @@
 import { initializeApp } from 'firebase/app';
 import { getDatabase, ref, set, onValue, get } from 'firebase/database';
-import { createDeck, createAdventureDeck, shuffleDeck, getRandomCharacter } from './cardData.js';
+import { createActionDeck, createSpellDeck, createItemDeck, createAdventureDeck, shuffleDeck, getRandomCharacter } from './cardData.js';
 
 const firebaseConfig = {
   apiKey: "AIzaSyAm8uZMkpR9mNsWetQ4Amn9oskeLn2YFUk",
@@ -31,10 +31,14 @@ export function subscribeToGameState(callback) {
 }
 
 export async function startNewGame() {
-  const deck = shuffleDeck(createDeck());
+  const actionDeck = shuffleDeck(createActionDeck());
+  const spellDeck = shuffleDeck(createSpellDeck());
+  const itemDeck = shuffleDeck(createItemDeck());
   const adventureDeck = shuffleDeck(createAdventureDeck());
   const initialState = {
-    deck,
+    actionDeck,
+    spellDeck,
+    itemDeck,
     hands: {
       player1: [],
       player2: [],
@@ -48,7 +52,9 @@ export async function startNewGame() {
       player2: null,
     },
     currentCard: null,
-    discardPile: [],
+    actionDiscardPile: [],
+    spellDiscardPile: [],
+    itemDiscardPile: [],
     adventureDeck,
     adventureRow: [],
     adventurePiles: {
@@ -56,8 +62,8 @@ export async function startNewGame() {
       player2: [],
     },
     resources: {
-      player1: { damage: 0, gold: 0, mana: 0 },
-      player2: { damage: 0, gold: 0, mana: 0 },
+      player1: { damage: 7, gold: 4, mana: 2, maxHealth: 7, maxMana: 2, stamina: 5, strength: 2 },
+      player2: { damage: 7, gold: 4, mana: 2, maxHealth: 7, maxMana: 2, stamina: 5, strength: 2 },
     },
     cardDamage: {},
     currentTurn: 'player1',
@@ -87,26 +93,35 @@ export async function updateResource(playerId, resourceType, delta) {
   });
 }
 
-export async function drawCard(playerId) {
+export async function drawCard(playerId, deckType) {
   const gameRef = getGameRef();
   const snapshot = await get(gameRef);
   const state = snapshot.val();
 
-  if (!state || state.deck.length === 0) {
+  const deckKey = `${deckType}Deck`;
+  const deck = state?.[deckKey];
+
+  if (!state || !deck || deck.length === 0) {
     return;
   }
 
-  const [drawnCard, ...remainingDeck] = state.deck;
+  const [drawnCard, ...remainingDeck] = deck;
   const updatedHand = [...(state.hands?.[playerId] || []), drawnCard];
 
   await set(gameRef, {
     ...state,
-    deck: remainingDeck,
+    [deckKey]: remainingDeck,
     hands: {
       ...state.hands,
       [playerId]: updatedHand,
     },
   });
+}
+
+function getDiscardPileKey(cardType) {
+  if (cardType === 'Spell') return 'spellDiscardPile';
+  if (cardType === 'Item' || cardType === 'Item - Weapon') return 'itemDiscardPile';
+  return 'actionDiscardPile';
 }
 
 export async function playCard(playerId, cardId) {
@@ -124,30 +139,33 @@ export async function playCard(playerId, cardId) {
   const [playedCard] = playerHand.splice(cardIndex, 1);
   const updatedHand = [...playerHand];
 
-  const discardPile = state.discardPile || [];
-  const updatedDiscardPile = state.currentCard
-    ? [...discardPile, state.currentCard]
-    : discardPile;
+  // If there's a current card, move it to the appropriate discard pile
+  let updatedState = { ...state };
+  if (state.currentCard) {
+    const discardKey = getDiscardPileKey(state.currentCard.type);
+    const discardPile = state[discardKey] || [];
+    updatedState[discardKey] = [...discardPile, state.currentCard];
+  }
 
   await set(gameRef, {
-    ...state,
+    ...updatedState,
     hands: {
       ...state.hands,
       [playerId]: updatedHand,
     },
     currentCard: playedCard,
-    discardPile: updatedDiscardPile,
   });
 }
 
-export async function takeFromDiscard(playerId, cardId) {
+export async function takeFromDiscard(playerId, cardId, deckType) {
   const gameRef = getGameRef();
   const snapshot = await get(gameRef);
   const state = snapshot.val();
 
   if (!state) return;
 
-  const discardPile = state.discardPile || [];
+  const discardKey = `${deckType}DiscardPile`;
+  const discardPile = state[discardKey] || [];
   const cardIndex = discardPile.findIndex(card => card.id === cardId);
 
   if (cardIndex === -1) return;
@@ -162,7 +180,7 @@ export async function takeFromDiscard(playerId, cardId) {
       ...state.hands,
       [playerId]: updatedHand,
     },
-    discardPile: updatedDiscardPile,
+    [discardKey]: updatedDiscardPile,
   });
 }
 
@@ -199,7 +217,8 @@ export async function discardFromHand(playerId, cardId) {
 
   const [discardedCard] = playerHand.splice(cardIndex, 1);
   const updatedHand = [...playerHand];
-  const updatedDiscardPile = [...(state.discardPile || []), discardedCard];
+  const discardKey = getDiscardPileKey(discardedCard.type);
+  const updatedDiscardPile = [...(state[discardKey] || []), discardedCard];
 
   await set(gameRef, {
     ...state,
@@ -207,7 +226,7 @@ export async function discardFromHand(playerId, cardId) {
       ...state.hands,
       [playerId]: updatedHand,
     },
-    discardPile: updatedDiscardPile,
+    [discardKey]: updatedDiscardPile,
   });
 }
 
@@ -218,12 +237,13 @@ export async function discardCurrentCard() {
 
   if (!state || !state.currentCard) return;
 
-  const updatedDiscardPile = [...(state.discardPile || []), state.currentCard];
+  const discardKey = getDiscardPileKey(state.currentCard.type);
+  const updatedDiscardPile = [...(state[discardKey] || []), state.currentCard];
 
   await set(gameRef, {
     ...state,
     currentCard: null,
-    discardPile: updatedDiscardPile,
+    [discardKey]: updatedDiscardPile,
   });
 }
 
@@ -317,23 +337,25 @@ export async function takeFromAdventureRow(playerId, cardId) {
   });
 }
 
-export async function shuffleDiscardIntoDeck() {
+export async function shuffleDiscardIntoDeck(deckType) {
   const gameRef = getGameRef();
   const snapshot = await get(gameRef);
   const state = snapshot.val();
 
   if (!state) return;
 
-  const discardPile = state.discardPile || [];
+  const discardKey = `${deckType}DiscardPile`;
+  const deckKey = `${deckType}Deck`;
+  const discardPile = state[discardKey] || [];
   if (discardPile.length === 0) return;
 
-  const currentDeck = state.deck || [];
+  const currentDeck = state[deckKey] || [];
   const combinedDeck = shuffleDeck([...currentDeck, ...discardPile]);
 
   await set(gameRef, {
     ...state,
-    deck: combinedDeck,
-    discardPile: [],
+    [deckKey]: combinedDeck,
+    [discardKey]: [],
   });
 }
 
@@ -380,7 +402,8 @@ export async function discardFromInventory(playerId, cardId) {
 
   const [discardedCard] = playerInventory.splice(cardIndex, 1);
   const updatedInventory = [...playerInventory];
-  const updatedDiscardPile = [...(state.discardPile || []), discardedCard];
+  const discardKey = getDiscardPileKey(discardedCard.type);
+  const updatedDiscardPile = [...(state[discardKey] || []), discardedCard];
 
   await set(gameRef, {
     ...state,
@@ -388,7 +411,7 @@ export async function discardFromInventory(playerId, cardId) {
       ...state.inventories,
       [playerId]: updatedInventory,
     },
-    discardPile: updatedDiscardPile,
+    [discardKey]: updatedDiscardPile,
   });
 }
 

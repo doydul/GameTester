@@ -21,7 +21,7 @@ import {
 } from '../firebase.js';
 
 export function GameBoard({ gameState, playerId, opponentId }) {
-  const [showDiscardModal, setShowDiscardModal] = useState(false);
+  const [showDiscardModal, setShowDiscardModal] = useState(null); // null, 'action', 'spell', or 'item'
   const [showAdventurePileModal, setShowAdventurePileModal] = useState(false);
   const [showOpponentHandModal, setShowOpponentHandModal] = useState(false);
   const [showOpponentInventoryModal, setShowOpponentInventoryModal] = useState(false);
@@ -32,8 +32,8 @@ export function GameBoard({ gameState, playerId, opponentId }) {
     startNewGame();
   };
 
-  const handleTakeFromDiscard = (cardId) => {
-    takeFromDiscard(playerId, cardId);
+  const handleTakeFromDiscard = (cardId, deckType) => {
+    takeFromDiscard(playerId, cardId, deckType);
   };
 
   const handleTakeCurrentCard = () => {
@@ -56,20 +56,26 @@ export function GameBoard({ gameState, playerId, opponentId }) {
     discardFromAdventureCardRow(cardId);
   };
 
-  const handleShuffleDiscardIntoDeck = () => {
-    shuffleDiscardIntoDeck();
+  const handleShuffleDiscardIntoDeck = (deckType) => {
+    shuffleDiscardIntoDeck(deckType);
   };
 
   const handleEndTurn = () => {
     endTurn();
   };
 
-  const deckCount = gameState?.deck?.length ?? 0;
-  const deckEmpty = deckCount === 0;
+  const actionDeckCount = gameState?.actionDeck?.length ?? 0;
+  const spellDeckCount = gameState?.spellDeck?.length ?? 0;
+  const itemDeckCount = gameState?.itemDeck?.length ?? 0;
+  const actionDeckEmpty = actionDeckCount === 0;
+  const spellDeckEmpty = spellDeckCount === 0;
+  const itemDeckEmpty = itemDeckCount === 0;
   const playerCards = gameState?.hands?.[playerId] || [];
   const playerInventory = gameState?.inventories?.[playerId] || [];
   const currentCard = gameState?.currentCard || null;
-  const discardPile = gameState?.discardPile || [];
+  const actionDiscardPile = gameState?.actionDiscardPile || [];
+  const spellDiscardPile = gameState?.spellDiscardPile || [];
+  const itemDiscardPile = gameState?.itemDiscardPile || [];
   const adventureDeckCount = gameState?.adventureDeck?.length ?? 0;
   const adventureDeckEmpty = adventureDeckCount === 0;
   const topAdventureCard = gameState?.adventureDeck?.[0] || null;
@@ -103,12 +109,20 @@ export function GameBoard({ gameState, playerId, opponentId }) {
           New Game
         </button>
         <div className="deck-info">
-          <span className="deck-label">Deck:</span>
-          <span className="deck-count">{deckCount} cards remaining</span>
+          <span className="deck-label">Action Deck:</span>
+          <span className="deck-count">{actionDeckCount} cards</span>
+        </div>
+        <div className="deck-info">
+          <span className="deck-label">Spell Deck:</span>
+          <span className="deck-count">{spellDeckCount} cards</span>
+        </div>
+        <div className="deck-info">
+          <span className="deck-label">Item Deck:</span>
+          <span className="deck-count">{itemDeckCount} cards</span>
         </div>
         <div className="deck-info">
           <span className="deck-label">Adventure Deck:</span>
-          <span className="deck-count">{adventureDeckCount} cards remaining</span>
+          <span className="deck-count">{adventureDeckCount} cards</span>
         </div>
       </div>
 
@@ -159,26 +173,76 @@ export function GameBoard({ gameState, playerId, opponentId }) {
                 <div className="empty-slot">No card played</div>
               )}
             </div>
-            <div className="discard-pile-area">
-              <div
-                className="clickable"
-                onClick={() => setShowDiscardModal(true)}
-              >
-                <h3>Discard Pile ({discardPile.length})</h3>
-                {discardPile.length > 0 ? (
-                  <Card card={discardPile[discardPile.length - 1]} cardDamage={cardDamage} />
-                ) : (
-                  <div className="empty-slot">Empty</div>
-                )}
-                <p className="click-hint">Click to view all</p>
-              </div>
-              <button
-                className="shuffle-discard-button"
-                onClick={handleShuffleDiscardIntoDeck}
-                disabled={discardPile.length === 0}
-              >
-                Shuffle into Deck
-              </button>
+            <div className="discard-piles-container">
+              {(actionDeckCount > 0 || actionDiscardPile.length > 0) && (
+                <div className="discard-pile-area action-discard">
+                  <div
+                    className="clickable"
+                    onClick={() => setShowDiscardModal('action')}
+                  >
+                    <h3>Action Discard ({actionDiscardPile.length})</h3>
+                    {actionDiscardPile.length > 0 ? (
+                      <Card card={actionDiscardPile[actionDiscardPile.length - 1]} cardDamage={cardDamage} />
+                    ) : (
+                      <div className="empty-slot">Empty</div>
+                    )}
+                    <p className="click-hint">Click to view all</p>
+                  </div>
+                  <button
+                    className="shuffle-discard-button"
+                    onClick={() => handleShuffleDiscardIntoDeck('action')}
+                    disabled={actionDiscardPile.length === 0}
+                  >
+                    Shuffle into Deck
+                  </button>
+                </div>
+              )}
+              {(spellDeckCount > 0 || spellDiscardPile.length > 0) && (
+                <div className="discard-pile-area spell-discard">
+                  <div
+                    className="clickable"
+                    onClick={() => setShowDiscardModal('spell')}
+                  >
+                    <h3>Spell Discard ({spellDiscardPile.length})</h3>
+                    {spellDiscardPile.length > 0 ? (
+                      <Card card={spellDiscardPile[spellDiscardPile.length - 1]} cardDamage={cardDamage} />
+                    ) : (
+                      <div className="empty-slot">Empty</div>
+                    )}
+                    <p className="click-hint">Click to view all</p>
+                  </div>
+                  <button
+                    className="shuffle-discard-button"
+                    onClick={() => handleShuffleDiscardIntoDeck('spell')}
+                    disabled={spellDiscardPile.length === 0}
+                  >
+                    Shuffle into Deck
+                  </button>
+                </div>
+              )}
+              {(itemDeckCount > 0 || itemDiscardPile.length > 0) && (
+                <div className="discard-pile-area item-discard">
+                  <div
+                    className="clickable"
+                    onClick={() => setShowDiscardModal('item')}
+                  >
+                    <h3>Item Discard ({itemDiscardPile.length})</h3>
+                    {itemDiscardPile.length > 0 ? (
+                      <Card card={itemDiscardPile[itemDiscardPile.length - 1]} cardDamage={cardDamage} />
+                    ) : (
+                      <div className="empty-slot">Empty</div>
+                    )}
+                    <p className="click-hint">Click to view all</p>
+                  </div>
+                  <button
+                    className="shuffle-discard-button"
+                    onClick={() => handleShuffleDiscardIntoDeck('item')}
+                    disabled={itemDiscardPile.length === 0}
+                  >
+                    Shuffle into Deck
+                  </button>
+                </div>
+              )}
             </div>
           </div>
           
@@ -225,7 +289,9 @@ export function GameBoard({ gameState, playerId, opponentId }) {
             <Hand
               playerId={playerId}
               cards={playerCards}
-              deckEmpty={deckEmpty}
+              actionDeckEmpty={actionDeckEmpty}
+              spellDeckEmpty={spellDeckEmpty}
+              itemDeckEmpty={itemDeckEmpty}
               resources={playerResources}
               cardDamage={cardDamage}
             />
@@ -267,10 +333,15 @@ export function GameBoard({ gameState, playerId, opponentId }) {
 
       {showDiscardModal && (
         <DiscardPileModal
-          cards={discardPile}
-          onTakeCard={handleTakeFromDiscard}
-          onClose={() => setShowDiscardModal(false)}
+          cards={
+            showDiscardModal === 'action' ? actionDiscardPile :
+            showDiscardModal === 'spell' ? spellDiscardPile :
+            itemDiscardPile
+          }
+          onTakeCard={(cardId) => handleTakeFromDiscard(cardId, showDiscardModal)}
+          onClose={() => setShowDiscardModal(null)}
           cardDamage={cardDamage}
+          deckType={showDiscardModal}
         />
       )}
 

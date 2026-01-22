@@ -1,17 +1,19 @@
 import { Card } from './Card.jsx';
 
-export function DiscardPileModal({ cards, onTakeCard, onClose, cardDamage }) {
+export function DiscardPileModal({ cards, onTakeCard, onClose, cardDamage, deckType }) {
   const handleBackdropClick = (e) => {
     if (e.target === e.currentTarget) {
       onClose();
     }
   };
 
+  const deckTypeLabel = deckType ? deckType.charAt(0).toUpperCase() + deckType.slice(1) : '';
+
   return (
     <div className="modal-backdrop" onClick={handleBackdropClick}>
       <div className="modal">
         <div className="modal-header">
-          <h2>Discard Pile ({cards.length} cards)</h2>
+          <h2>{deckTypeLabel} Discard Pile ({cards.length} cards)</h2>
           <button className="modal-close" onClick={onClose}>
             &times;
           </button>

@@ -298,6 +298,22 @@ main {
   color: #4ecca3;
 }
 
+.maxhealth-resource .resource-value {
+  color: #ff6b9d;
+}
+
+.maxmana-resource .resource-value {
+  color: #9b59b6;
+}
+
+.stamina-resource .resource-value {
+  color: #f39c12;
+}
+
+.strength-resource .resource-value {
+  color: #e94560;
+}
+
 .draw-button {
   width: 100%;
   padding: 0.6em 1em;
@@ -321,6 +337,12 @@ main {
   opacity: 0.5;
   cursor: not-allowed;
   border-color: #555;
+}
+
+.draw-buttons {
+  display: flex;
+  flex-direction: row;
+  gap: 1em;
 }
 
 .cards-container {
@@ -423,6 +445,11 @@ main {
 
 .keyword-gold {
   color: #ffd700;
+  font-weight: 700;
+}
+
+.keyword-stamina {
+  color: #ebe00d;
   font-weight: 700;
 }
 
@@ -603,6 +630,11 @@ main {
   background: #16213e;
   border-radius: 8px;
   padding: 1em;
+}
+
+.discard-piles-container {
+  display: flex;
+  flex-direction: row;
 }
 
 .shuffle-discard-button {
