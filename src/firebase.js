@@ -118,9 +118,9 @@ export async function drawCard(playerId, deckType) {
   });
 }
 
-function getDiscardPileKey(cardType) {
-  if (cardType === 'Spell') return 'spellDiscardPile';
-  if (cardType === 'Item' || cardType === 'Item - Weapon') return 'itemDiscardPile';
+function getDiscardPileKey(card) {
+  if (card.originDeck === 'spell') return 'spellDiscardPile';
+  if (card.originDeck === 'item') return 'itemDiscardPile';
   return 'actionDiscardPile';
 }
 
@@ -142,7 +142,7 @@ export async function playCard(playerId, cardId) {
   // If there's a current card, move it to the appropriate discard pile
   let updatedState = { ...state };
   if (state.currentCard) {
-    const discardKey = getDiscardPileKey(state.currentCard.type);
+    const discardKey = getDiscardPileKey(state.currentCard);
     const discardPile = state[discardKey] || [];
     updatedState[discardKey] = [...discardPile, state.currentCard];
   }
@@ -217,7 +217,7 @@ export async function discardFromHand(playerId, cardId) {
 
   const [discardedCard] = playerHand.splice(cardIndex, 1);
   const updatedHand = [...playerHand];
-  const discardKey = getDiscardPileKey(discardedCard.type);
+  const discardKey = getDiscardPileKey(discardedCard);
   const updatedDiscardPile = [...(state[discardKey] || []), discardedCard];
 
   await set(gameRef, {
@@ -237,7 +237,7 @@ export async function discardCurrentCard() {
 
   if (!state || !state.currentCard) return;
 
-  const discardKey = getDiscardPileKey(state.currentCard.type);
+  const discardKey = getDiscardPileKey(state.currentCard);
   const updatedDiscardPile = [...(state[discardKey] || []), state.currentCard];
 
   await set(gameRef, {
@@ -402,7 +402,7 @@ export async function discardFromInventory(playerId, cardId) {
 
   const [discardedCard] = playerInventory.splice(cardIndex, 1);
   const updatedInventory = [...playerInventory];
-  const discardKey = getDiscardPileKey(discardedCard.type);
+  const discardKey = getDiscardPileKey(discardedCard);
   const updatedDiscardPile = [...(state[discardKey] || []), discardedCard];
 
   await set(gameRef, {
